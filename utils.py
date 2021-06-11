@@ -29,6 +29,13 @@ def validate_plate(plate: str) -> bool:
     return True
 
 
+def get_plate_digit(plate: str) -> int:
+    """
+    Returns the last digit of the plate as an integer.
+    """
+    return int(plate[-1])
+
+
 def get_day_name(date: dt.date) -> str:
     """
     Returns the name of the day given a date object.
