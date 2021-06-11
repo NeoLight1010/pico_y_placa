@@ -1,142 +1,56 @@
 import datetime as dt
+import cli
+import utils
 
 
-def input_date():
+def get_plate_digit(plate: str) -> int:
     """
-    Info: A validation function to verify the correct input of the Date, verifies the length and the format, returns the verified date value.
+    Returns the last digit of the plate as an integer.
     """
-    while True:
-        date = input(
-            "Please enter the date you want to check in this format DD-MM-YYYY (ex: 10-06-2021): \n"
-        )
-        if len(date) > 10 or len(date) < 10:
-            print("the length of the date isn't correct, try again")
-            continue
-        try:
-            day, month, year = (int(i) for i in date.split("-"))
-            dt.date(year, month, day)
-            return date
-        except ValueError:
-            print(
-                "the format of the date is incorrect remember to use DD-MM-YYYY format"
-            )
-            continue
+    return int(plate[-1])
 
 
-def input_plate():
+def _is_pico_y_placa_activated(time: dt.time) -> bool:
     """
-    Info: Validates the input of the plate, it's length and if the last number could be transformed to an integer
+    Returns True if Pico y Placa is active at the given time.
+
+    Pico y placa is active at: 7:00am - 9:30am / 16:00pm - 19:30.
     """
-    while True:
-        plate = input("Enter your plate number using this syntax AAA0123: \n")
-        if len(plate) > 7 or len(plate) < 7:
-            print(
-                "wrong plate length, must be a 7 char plate with this format 'AAA0123'"
-            )
-            continue
-        try:
-            int(plate[-1])
-            return plate
-        except ValueError:
-            print("The format of the plate is incorrect, try again")
-            continue
+    hour = time.hour
+    minutes = time.minute
 
-
-def input_time():
-    while True:
-        time = input(
-            "Tell us, what time you want to check, use this format HH:MM (ex: 08:30): \n"
-        )
-        try:
-            hour, minutes = (int(i) for i in time.split(":"))
-            dt.time(hour, minutes)
-            return time
-        except ValueError:
-            print("the time format is incorrect, please try again.")
-            continue
-
-
-def find_day(date):
-    """
-    Info: splits the date into day, month and year creating a new datetime object and returning it's day name.
-    """
-    try:
-        day, month, year = (int(i) for i in date.split("-"))
-        today = dt.date(year, month, day)
-        return today.strftime("%A")
-    except ValueError:
-        print(
-            "the format or value/s given is/are incorrect please use it like this (dd-mm-yyyy)"
-        )
-
-
-def get_time(current_time):
-    """
-    Info: Splits the time HH:MM given as an string input, verifies if it's a valid time using datetime library with strftime and returns the time as a tuple.
-
-    """
-    try:
-        hour, minutes = (int(i) for i in current_time.split(":"))
-        current = dt.time(hour, minutes)
-        current.strftime("%H:%M")
-        return (hour, minutes)
-    except ValueError:
-        print("Please enter a correct Time format HH:MM (ex: 09:30)")
-
-
-def check_plate(plate):
-    """
-    return the last digit as an integer.
-    """
-    last_digit = int(plate[-1])
-    return last_digit
-
-
-def _is_pico_y_placa_activated(hour, minutes):
-    # Note: To develop this application you need to consider the past rules of the Pico&Placa. (Hours: 7:00am - 9:30am / 16:00pm - 19:30). Additional research would be needed to complete the exercise.
-    if hour < 7:
+    if time.hour < 7:
         return False
-    elif hour >= 19 and minutes >= 30:
+
+    if hour >= 19 and minutes >= 30:
         return False
-    elif hour == 9 and minutes >= 30:
+
+    if hour == 9 and minutes >= 30:
         return False
-    elif hour > 9 and hour < 16:
+
+    if hour > 9 and hour < 16:
         return False
+
     return True
 
 
-def _match_day_with_plate_number(day, week):
+def pico_y_placa(week: dict):
     """
-    Info: matchs the the day of the week with it's plate value, returns 10 if it's Saturday or Sunday.
+    Returns the information about the Pico & placa pronostic and show a message to the user.
     """
-    if day in week:
-        return week.get(day)
-    else:
-        return (10, 10)
+    date = cli.input_date()
+    plate = cli.input_plate()
+    time = cli.input_time()
 
+    plate_last_digit = get_plate_digit(plate)
+    target_day = utils.get_day_name(date)
+    pico_placa_is_active = _is_pico_y_placa_activated(time)
+    number1, number2 = week[target_day]
 
-def pico_y_placa(week):
-    """
-    Info: returns the information about the Pico & placa pronostic and show a message to the user.
-    """
-    date = input_date()
-    plate = input_plate()
-    time = input_time()
-    plate_last_digit = check_plate(plate)
-    target_day = find_day(date)
-    hour, minutes = get_time(time)
-    pico_placa = _is_pico_y_placa_activated(hour, minutes)
-    number1, number2 = _match_day_with_plate_number(target_day, week)
-
-    # print(plate_last_digit, target_day, hour, minutes, pico_placa, number1, number2)
-    print(
-        "Welcome to Pico & Placa Predictor, please take a moment to input the remaining data: "
-    )
-    print(
-        f"Hello today is {date}, it's a good {target_day}, currently at {time} hours this is your Pico & Placa result for your license plate number {plate}:"
-    )
-    if plate_last_digit == number1 or plate_last_digit == number2:
-        if pico_placa:
+    if pico_placa_is_active and (
+        plate_last_digit == number1 or plate_last_digit == number2
+    ):
+        if pico_placa_is_active:
             print(
                 "Pico & Placa is activated, you can't drive right now, remember not to do it on this hours (7:00am - 9:30am / 16:00pm - 19:30)."
             )
@@ -160,5 +74,7 @@ if __name__ == "__main__":
         "Wednesday": (5, 6),
         "Thursday": (7, 8),
         "Friday": (9, 0),
+        "Saturday": (10, 10),
+        "Sunday": (10, 10),
     }
     pico_y_placa(_week)
