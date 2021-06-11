@@ -17,4 +17,4 @@ if __name__ == "__main__":
     date = cli.input_date()
     time = cli.input_time()
 
-    print(core.can_drive_around(plate, date, time, _restrictions))
+    print(core.can_drive_around(plate, date, time, _restrictions).message)
