@@ -10,11 +10,11 @@ def input_date() -> dt.date:
         try:
             return utils.str_to_date(
                 input(
-                    "Please enter the date you want to check in this format: DD-MM-YYYY (ex: 10-11-2021):\n"
+                    "Please enter the date you want to check in this format: DD-MM-YY (ex: 10-11-21):\n"
                 )
             )
         except ValueError:
-            print("Invalid input. Remember to use DD-MM-YYYY format.")
+            print("Invalid input. Remember to use DD-MM-YY format.")
             continue
 
 
