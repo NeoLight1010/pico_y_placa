@@ -3,6 +3,16 @@ from typing import Optional
 from . import utils
 from dataclasses import dataclass
 
+_restrictions = {
+    "Monday": (1, 2),
+    "Tuesday": (3, 4),
+    "Wednesday": (5, 6),
+    "Thursday": (7, 8),
+    "Friday": (9, 0),
+    "Saturday": (10, 10),
+    "Sunday": (10, 10),
+}
+
 
 @dataclass
 class CanDriveAroundResult:
@@ -35,7 +45,7 @@ def is_pico_placa_active(time: dt.time) -> bool:
 
 
 def can_drive_around(
-    plate: str, date: dt.date, time: dt.time, restriction_table: dict
+    plate: str, date: dt.date, time: dt.time, restriction_table: dict = _restrictions
 ) -> CanDriveAroundResult:
     last_digit = utils.get_plate_digit(plate)
     permitted1, permitted2 = restriction_table[
