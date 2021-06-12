@@ -5,6 +5,11 @@
     <title>Pico y Placa - Quito</title>
   </head>
   <body>
-    <p>Pico y Placa Quito</p>
+    <h1>Pico y Placa - Quito</h1>
+    <form action="./" method="post">
+      {% csrf_token %}
+      {{ form }}
+      <input type="submit" value="Submit" />
+    </form>
   </body>
 </html>
