@@ -1,5 +1,5 @@
 import datetime as dt
-import utils
+from . import utils
 
 
 def input_date() -> dt.date:

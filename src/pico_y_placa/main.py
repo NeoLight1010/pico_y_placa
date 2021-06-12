@@ -1,5 +1,5 @@
-import cli
-import core
+from . import cli
+from . import core
 
 
 if __name__ == "__main__":

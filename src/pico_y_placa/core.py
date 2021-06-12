@@ -1,6 +1,6 @@
 import datetime as dt
 from typing import Optional
-import utils
+from . import utils
 from dataclasses import dataclass
 
 
