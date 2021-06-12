@@ -1,0 +1,11 @@
+body {
+  height: 100vh;
+}
+
+.wrapper {
+  height: 100%;
+}
+
+button {
+  margin-top: 10px;
+}
